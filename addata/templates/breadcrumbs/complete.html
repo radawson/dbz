@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Breadcrumbs{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <H1>Import .parquet</H1>
+    <div class="container">
+        Parquet import complete
+    </div>
+    <div>
+        <H4>Files Processed:</H4>
+        {% for file in files %}
+           <p>{{file}}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
