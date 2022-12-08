@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
@@ -19,7 +19,7 @@ def create_app():
 
     @app.route('/')
     def index():
-        return "<H2>Welcome to Parquet Manager</H2>"
+        return render_template('home/index.html')
 
     from . import breadcrumb
     app.register_blueprint(breadcrumb.bp)
