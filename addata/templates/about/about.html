@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block body %}
+<H1>Ad Data Manager</H1>
+<h2>About</h2>
+
+<br>
+<p>Currently this site allows you to upload a parquet file and import it into our SQL database.</p>
+<br>
+<p>Database info: <br>
+    user: webtools <br>
+    password: PASSword01!
+</p>
+<br>
+<p>Got a suggestion or an issue?</p>
+<a href="https://github.com/radawson/dbz/issues">Click here</a>
+
+{% endblock %}

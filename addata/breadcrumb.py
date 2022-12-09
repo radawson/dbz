@@ -3,7 +3,7 @@ from werkzeug.utils import secure_filename
 import os
 import pandas as pd
 from datetime import datetime
-from . import models
+from models import models
 
 ALLOWED_EXTENSIONS = {'parquet'}
 PROCESSED_PATH = './processed'
@@ -18,6 +18,7 @@ bp = Blueprint(
 @bp.route('/', methods=['GET', 'POST'])
 def breadcrumbs():
     results = models.File.query.all()
+    print(type(results[1]))
     return render_template('breadcrumbs/index.html', data=results)
 
 @bp.route('/upload', methods=['GET', 'POST'])

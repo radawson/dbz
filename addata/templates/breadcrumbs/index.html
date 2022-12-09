@@ -16,10 +16,10 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in data %}
+        {% for element in data %}
         <tr>
-            <td>{{row[0]}}</td>
-            <td>{{row[1]}}</td>
+            <td>{{element.filename}}</td>
+            <td>{{element.time_processed}}</td>
         </tr>
         {% endfor %}
     </tbody>
