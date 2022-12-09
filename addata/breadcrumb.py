@@ -2,6 +2,7 @@ from flask import Blueprint, flash, render_template, request, redirect, send_fro
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
+from datetime import datetime
 from . import models
 
 ALLOWED_EXTENSIONS = {'parquet'}
@@ -16,7 +17,8 @@ bp = Blueprint(
 
 @bp.route('/', methods=['GET', 'POST'])
 def breadcrumbs():
-    return render_template('breadcrumbs/index.html')
+    results = models.File.query.all()
+    return render_template('breadcrumbs/index.html', data=results)
 
 @bp.route('/upload', methods=['GET', 'POST'])
 def upload_file():
@@ -40,12 +42,16 @@ bp.add_url_rule(
 )
 
 @bp.route('/import')
-def inhale():
+def process():
     results = []
     for entry in os.scandir(UPLOAD_PATH):
         if '.parquet' in entry.name:
+            #TODO: check if filename has previously been uploaded?
             df = pd.read_parquet(UPLOAD_PATH + '/'+ entry.name)
             df.to_sql("breadcrumbs", con=models.db.engine, if_exists='append')
+            new_file = models.File(filename=entry.name)
+            models.db.session.add(new_file)
+            models.db.session.commit()
             results.append(entry.name)
             print(f'Processing {entry.name}')
             os.rename(UPLOAD_PATH +'/'+ entry.name, PROCESSED_PATH +'/'+ entry.name)

@@ -8,6 +8,23 @@
 <H1>Breadcrumb Manager</H1>
 <h2>Under Construction</h2>
 
+<table>
+    <thead>
+        <tr>
+            <th>Filename</th>
+            <th>Processed On</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in data %}
+        <tr>
+            <td>{{row[0]}}</td>
+            <td>{{row[1]}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 <a href="import">Click here to import files</a>
 <br>
 <a href="upload">Click here to upload files</a>

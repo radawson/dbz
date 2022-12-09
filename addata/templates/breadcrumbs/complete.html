@@ -5,16 +5,15 @@
 {% endblock %}
 
 {% block body %}
+<H1>Import Results</H1>
 <div class="container">
-    <H1>Import .parquet</H1>
-    <div class="container">
-        Parquet import complete
-    </div>
-    <div>
-        <H4>Files Processed:</H4>
-        {% for file in files %}
-           <p>{{file}}</p>
-        {% endfor %}
-    </div>
+    Parquet import complete
 </div>
+<div>
+    <H4>Files Processed:</H4>
+    {% for file in files %}
+    <p>{{file}}</p>
+    {% endfor %}
+</div>
+
 {% endblock %}
