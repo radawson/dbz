@@ -18,7 +18,6 @@ bp = Blueprint(
 @bp.route('/', methods=['GET', 'POST'])
 def breadcrumbs():
     results = models.File.query.all()
-    print(type(results[1]))
     return render_template('breadcrumbs/index.html', data=results)
 
 @bp.route('/upload', methods=['GET', 'POST'])
