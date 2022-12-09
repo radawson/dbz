@@ -33,5 +33,5 @@ class Breadcrumb(db.Model):
     manufacturer= db.Column(db.String(50))
     device_model= db.Column(db.String(25))
     network= db.Column(db.String(25))
-    record_hash = db.Column(db.String, unique=True)
+
     
