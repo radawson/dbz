@@ -15,6 +15,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {{ turbo() }}
     {% endblock %}
 </head>
 
@@ -28,7 +29,6 @@
         <div class="collapse navbar-collapse" id="mnav">
             <ul class="navbar-nav">
                 <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
-                <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
                 <li class="nav-item dropdown">
                     <a href="" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Parquet Manager</a>
                     <div class="dropdown-menu">
@@ -37,23 +37,16 @@
                         <a href="/breadcrumbs/import" class="dropdown-item">Import</a>
                     </div>
                 </li>
+                <li class="nav-item"><a href="/about" class="nav-link">About</a></li>
                 <li class="nav-item"><a href="https://github.com/radawson/dbz/issues" class="nav-link">Issues</a></li>
             </ul>
-            <form class="form-inline d-flex flex-nowrap text-right">
+        </div>
+            <form class="form-inline d-flex flex-nowrap justify-content-end">
                 <input type="search" class="form-control" placeholder="search">
                 <button class="btn btn-secondary">Search</button>
             </form>
-        </div>
     </nav>
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="container">
-        {% for message in messages %}
-        {{ message }}
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
+    {% include "message.html" %}
 
     <div class="container">
         {% block body %}{% endblock %}

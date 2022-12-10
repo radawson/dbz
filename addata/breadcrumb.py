@@ -18,6 +18,7 @@ bp = Blueprint(
 @bp.route('/', methods=['GET', 'POST'])
 def breadcrumbs():
     results = models.File.query.all()
+    results.sort(key=lambda File: File.filename)
     return render_template('breadcrumbs/index.html', data=results)
 
 @bp.route('/upload', methods=['GET', 'POST'])
@@ -25,7 +26,7 @@ def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('Please select a file')
+            
             return redirect(request.url)
         flash("Please wait, this can take some time")
         for f in request.files.getlist('file'):
@@ -46,7 +47,12 @@ def process():
     results = []
     for entry in os.scandir(UPLOAD_PATH):
         if '.parquet' in entry.name:
-            #TODO: check if filename has previously been uploaded?
+            # Check for previously processed files
+            #for file in old_files:
+            query = models.db.select()
+            #TODO: disallow duplicate files imports?
+            if models.File.query.filter_by(filename=entry.name).first():
+                print('File is a duplicate')
             df = pd.read_parquet(UPLOAD_PATH + '/'+ entry.name)
             df.to_sql("breadcrumbs", con=models.db.engine, if_exists='append')
             new_file = models.File(filename=entry.name)
@@ -55,7 +61,7 @@ def process():
             results.append(entry.name)
             print(f'Processing {entry.name}')
             os.rename(UPLOAD_PATH +'/'+ entry.name, PROCESSED_PATH +'/'+ entry.name)
-    return render_template('breadcrumbs/complete.html', files=results)
+    return render_template('breadcrumbs/complete.html', files=results, message=[".parquet import complete"])
 
 def allowed_file(filename):
     return '.' in filename and \

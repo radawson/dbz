@@ -6,14 +6,24 @@
 
 {% block body %}
 <H1>Import Results</H1>
-<div class="container">
-    Parquet import complete
-</div>
-<div>
-    <H4>Files Processed:</H4>
-    {% for file in files %}
-    <p>{{file}}</p>
-    {% endfor %}
+
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    <h4>Files Processed</h4>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in files %}
+            <tr>
+                <td>{{file}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 {% endblock %}

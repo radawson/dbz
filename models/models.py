@@ -43,3 +43,5 @@ class File(db.Model):
     filename = db.Column(db.String(100))
     time_processed = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
     
+    def __repr__(self):
+        return repr((self.filename, self.time_processed))

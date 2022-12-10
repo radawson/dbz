@@ -1,3 +1,4 @@
+import threading
 from flask import Flask, request, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -34,5 +35,17 @@ def create_app():
 
     from . import breadcrumb
     app.register_blueprint(breadcrumb.bp)
+
+    @app.context_processor
+    def inject_load():
+        return {'message': ""}
+
+    @app.before_first_request
+    def before_first_request():
+        threading.Thread(target=update_message).start()
+
+    def update_message(message):
+        with app.app_context():
+            turbo.push(turbo.replace(render_template))
 
     return app
