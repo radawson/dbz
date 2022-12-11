@@ -26,12 +26,10 @@ def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            
             return redirect(request.url)
         flash("Please wait, this can take some time")
         for f in request.files.getlist('file'):
-            f.save(os.path.join(UPLOAD_PATH, f.filename))
-        #return redirect(url_for('breadcrumb.download_file', name=f.filename))
+            f.save(os.path.join(UPLOAD_PATH, secure_filename(f.filename)))
     return render_template('breadcrumbs/upload.html')
 
 @bp.route('/download/<name>')
@@ -45,6 +43,7 @@ bp.add_url_rule(
 @bp.route('/import')
 def process():
     results = []
+    messages = []
     for entry in os.scandir(UPLOAD_PATH):
         if '.parquet' in entry.name:
             # Check for previously processed files
@@ -53,15 +52,18 @@ def process():
             #TODO: disallow duplicate files imports?
             if models.File.query.filter_by(filename=entry.name).first():
                 print('File is a duplicate')
-            df = pd.read_parquet(UPLOAD_PATH + '/'+ entry.name)
-            df.to_sql("breadcrumbs", con=models.db.engine, if_exists='append')
-            new_file = models.File(filename=entry.name)
-            models.db.session.add(new_file)
-            models.db.session.commit()
-            results.append(entry.name)
-            print(f'Processing {entry.name}')
-            os.rename(UPLOAD_PATH +'/'+ entry.name, PROCESSED_PATH +'/'+ entry.name)
-    return render_template('breadcrumbs/complete.html', files=results, message=[".parquet import complete"])
+                messages.append(f'{entry.filename} is a duplicate')
+            else:   
+                df = pd.read_parquet(UPLOAD_PATH + '/'+ entry.name)
+                df.to_sql("breadcrumbs", con=models.db.engine, if_exists='append')
+                new_file = models.File(filename=entry.name)
+                models.db.session.add(new_file)
+                models.db.session.commit()
+                results.append(entry.name)
+                print(f'Processing {entry.name}')
+                os.rename(UPLOAD_PATH +'/'+ entry.name, PROCESSED_PATH +'/'+ entry.name)
+    messages.append(".parquet file import complete")
+    return render_template('breadcrumbs/complete.html', files=results, message=messages)
 
 def allowed_file(filename):
     return '.' in filename and \
