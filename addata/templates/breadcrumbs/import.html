@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Import{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block body %}
+<H1>Breadcrumb Manager</H1>
+<h2>Import Files</h2>
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
+<script>
+    function redirect() {
+        setTimeout(myURL, 5000);
+    }
+
+    function myURL() {
+        document.location.href = 'breadcrumbs/complete';
+    }
+</script>
+
+
+{% endblock %}

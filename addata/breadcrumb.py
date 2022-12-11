@@ -1,4 +1,4 @@
-from flask import Blueprint, flash, render_template, request, redirect, send_from_directory, url_for
+from flask import Blueprint, flash, render_template, request, redirect, send_from_directory, url_for, session
 from werkzeug.utils import secure_filename
 import os
 import pandas as pd
@@ -23,14 +23,20 @@ def breadcrumbs():
 
 @bp.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+    results = []
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
             return redirect(request.url)
-        flash("Please wait, this can take some time")
         for f in request.files.getlist('file'):
             f.save(os.path.join(UPLOAD_PATH, secure_filename(f.filename)))
-    return render_template('breadcrumbs/upload.html')
+            results.append(f.filename)
+        operation ="File upload complete"
+        session['results'] = results
+        session['operation'] = operation
+        return redirect(url_for('breadcrumb.complete'))
+    else:
+        return render_template('breadcrumbs/upload.html')
 
 @bp.route('/download/<name>')
 def download_file(name):
@@ -43,7 +49,6 @@ bp.add_url_rule(
 @bp.route('/import')
 def process():
     results = []
-    messages = []
     for entry in os.scandir(UPLOAD_PATH):
         if '.parquet' in entry.name:
             # Check for previously processed files
@@ -51,8 +56,8 @@ def process():
             query = models.db.select()
             #TODO: disallow duplicate files imports?
             if models.File.query.filter_by(filename=entry.name).first():
-                print('File is a duplicate')
-                messages.append(f'{entry.name} is a duplicate')
+                print('File is a duplicate', Warning)
+                flash(f'{entry.name} is a duplicate')
             else:   
                 df = pd.read_parquet(UPLOAD_PATH + '/'+ entry.name)
                 df.to_sql("breadcrumbs", con=models.db.engine, if_exists='append')
@@ -62,8 +67,16 @@ def process():
                 results.append(entry.name)
                 print(f'Processing {entry.name}')
                 os.rename(UPLOAD_PATH +'/'+ entry.name, PROCESSED_PATH +'/'+ entry.name)
-    messages.append(".parquet file import complete")
-    return render_template('breadcrumbs/complete.html', files=results, message=messages)
+    operation = "File import complete"
+    session['results'] = results
+    session['operation'] = operation
+    return redirect(url_for('breadcrumb.complete'))
+
+@bp.route('/complete')
+def complete():
+    results = session.pop('results', None)
+    operation = session.pop('operation', None)
+    return render_template('breadcrumbs/complete.html', files=results, title=operation)
 
 def allowed_file(filename):
     return '.' in filename and \

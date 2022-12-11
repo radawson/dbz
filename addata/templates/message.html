@@ -1,4 +1,4 @@
-{% with messages = message %}
+{% with messages = get_flashed_messages() %}
 {% if messages %}
 <div class="container">
     {% for message in messages %}
