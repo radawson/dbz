@@ -52,7 +52,7 @@ def process():
             #TODO: disallow duplicate files imports?
             if models.File.query.filter_by(filename=entry.name).first():
                 print('File is a duplicate')
-                messages.append(f'{entry.filename} is a duplicate')
+                messages.append(f'{entry.name} is a duplicate')
             else:   
                 df = pd.read_parquet(UPLOAD_PATH + '/'+ entry.name)
                 df.to_sql("breadcrumbs", con=models.db.engine, if_exists='append')
